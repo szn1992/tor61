@@ -1,6 +1,5 @@
 package tor61;
 
-<<<<<<< HEAD
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -8,9 +7,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
-=======
-import java.util.ArrayList;
->>>>>>> dd6bd500d208386c84ad5ade72724d30d700be56
+
 
 public class Tor61 {
 
@@ -37,7 +34,6 @@ public class Tor61 {
 		
 		String instanceNum_s = Util.padding(INSTANCE_NUM, 4);
 		
-<<<<<<< HEAD
 		int data = (Integer.valueOf(GROUP) << 16) | INSTANCE_NUM;	// DATA OR agent id
 		
 		// register this router at registration service
@@ -71,12 +67,7 @@ public class Tor61 {
 			// create circuit shit, haven't figured out
 			
 		}
-=======
-		// register and fetch
-		int data = (Integer.valueOf(GROUP) << 16) | INSTANCE_NUM;
-	   Util.register("" + PORT, NAME + instanceNum_s, "" + data);
-	   ArrayList<String> availableRouter = Util.fetch(NAME + instanceNum_s);
->>>>>>> dd6bd500d208386c84ad5ade72724d30d700be56
+	   
     }
 
 	class Cell {
