@@ -3,6 +3,7 @@ package tor61;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Util {
@@ -44,5 +45,61 @@ public class Util {
 		  num_s = "0" + num_s;
 	  }
 	  return num_s;
+  }
+  
+  public static HashMap<String, Byte> getCellTypeMap() {
+	  HashMap<String, Byte> map = new HashMap<String, Byte>();
+	  map.put("OPEN", (byte) 0x05);
+	  map.put("OPENED", (byte) 0x06);
+	  map.put("OPEN FAILED", (byte) 0x07);
+	  map.put("CREATE", (byte) 0x01);
+	  map.put("CREATED", (byte) 0x02);
+	  map.put("CREATE FAILED", (byte) 0x08);
+	  map.put("DESTROY", (byte) 0x04);
+	  map.put("RELAY", (byte) 0x03);
+	  
+	  return map;
+  }
+  
+  public static HashMap<String, Byte> getRelayCmdMap() {
+	  HashMap<String, Byte> map = new HashMap<String, Byte>();
+	  map.put("BEGIN", (byte) 0x01);
+	  map.put("DATA", (byte) 0x02);
+	  map.put("END", (byte) 0x03);
+	  map.put("CONNECTED", (byte) 0x04);
+	  map.put("EXTEND", (byte) 0x06);
+	  map.put("EXTENDED", (byte) 0x07);
+	  map.put("BEGIN FAILED", (byte) 0x0b);
+	  map.put("EXTEND FAILED", (byte) 0x0c);
+	  
+	  return map;
+  }
+  
+  public static HashMap<Byte, String> getByteCellTypeMap() {
+	  HashMap<Byte, String> map = new HashMap<Byte, String>();
+	  map.put((byte) 0x05, "OPEN");
+	  map.put((byte) 0x06, "OPENED");
+	  map.put((byte) 0x07, "OPEN FAILED");
+	  map.put((byte) 0x01, "CREATE");
+	  map.put((byte) 0x02, "CREATED");
+	  map.put((byte) 0x08, "CREATE FAILED");
+	  map.put((byte) 0x04, "DESTROY");
+	  map.put((byte) 0x03, "RELAY");
+	  
+	  return map;
+  }
+  
+  public static HashMap<Byte, String> getByteRelayCmdMap() {
+	  HashMap<Byte, String> map = new HashMap<Byte, String>();
+	  map.put((byte) 0x01, "BEGIN");
+	  map.put((byte) 0x02, "DATA");
+	  map.put((byte) 0x03, "END");
+	  map.put((byte) 0x04, "CONNECTED");
+	  map.put((byte) 0x06, "EXTEND");
+	  map.put((byte) 0x07, "EXTENDED");
+	  map.put((byte) 0x0b, "BEGIN FAILED");
+	  map.put((byte) 0x0c, "EXTEND FAILED");
+	  
+	  return map;
   }
 }
