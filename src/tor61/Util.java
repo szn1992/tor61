@@ -26,4 +26,23 @@ public class Util {
       }
       return (ArrayList<String>) list;
   }
+  
+  public static void register(String port, String name, String data) {
+     try {
+         ProcessBuilder pb = new ProcessBuilder("python","registration_client.py", port, name, data);
+         pb.inheritIO();
+         Process p = pb.start();
+     }
+     catch(Exception e) {
+         e.printStackTrace();
+     }
+  }
+  
+  public static String padding(int num, int length){
+	  String num_s = Integer.toString(num);
+	  for(int i = 0; i < length - num_s.length(); i++){
+		  num_s = "0" + num_s;
+	  }
+	  return num_s;
+  }
 }
