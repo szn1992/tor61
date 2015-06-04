@@ -1,7 +1,12 @@
 package tor61;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -101,5 +106,22 @@ public class Util {
 	  map.put((byte) 0x0c, "EXTEND FAILED");
 	  
 	  return map;
+  }
+  
+  // read message from the input stream
+  // TODO: add timeout?
+  public static byte[] readMessageCell(InputStream in){
+	  ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	  byte[] buffer = new byte[512];
+	  try {
+		  for(int s; (s=in.read(buffer)) != -1; ) {
+			  baos.write(buffer, 0, s);
+		  }
+	  } catch (IOException e) {
+		  System.out.println("Error when reading message from the input stream.");
+		  e.printStackTrace();
+	  }
+	  byte[] result = baos.toByteArray();
+	  return result;
   }
 }
