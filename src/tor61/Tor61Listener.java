@@ -4,14 +4,15 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-// This is the proxy side of the Tor61 router
-public class Tor61Proxy extends Thread{
+// This is the listener of the Tor61
+public class Tor61Listener extends Thread{
 	int port;
+	int type;
 	
-	public Tor61Proxy(int port){
+	public Tor61Listener(int port, int type){
 		// initiations and data goes here...
 		this.port = port;
-		
+		this.type = type;
 	}
 	
 	@Override
@@ -21,8 +22,13 @@ public class Tor61Proxy extends Thread{
 			ServerSocket serverSocket = new ServerSocket(port);
 			while (true) {
 				Socket s = serverSocket.accept();
-				ProxySideProcessor processor = new ProxySideProcessor(s);
-				processor.start();
+				if (type == Util.PROXY_SIDE_LISTENER) {
+					ProxySideProcessor processor = new ProxySideProcessor(s);
+					processor.start();
+				} else {
+					RouterSideProcessor processor = new RouterSideProcessor(s);
+					processor.start();
+				}
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

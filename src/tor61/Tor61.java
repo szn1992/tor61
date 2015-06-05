@@ -14,7 +14,8 @@ import java.util.Random;
 
 public class Tor61 {
 
-	static int PORT;
+	static int PROXY_PORT;
+	static int ROUTER_PORT;
 	static String NAME = "Tor61Router-";
 	static int INSTANCE_NUM;
 	static String GROUP;
@@ -33,14 +34,15 @@ public class Tor61 {
 		// get info from arguments
 		GROUP = args[0];
 		INSTANCE_NUM  = Integer.valueOf(args[1]);
-		PORT = Integer.valueOf(args[2]);
+		PROXY_PORT = Integer.valueOf(args[2]);
+		ROUTER_PORT = PROXY_PORT ++; // TODO: Find a better way to set port.
 		
 		String instanceNum_s = Util.padding(INSTANCE_NUM, 4);
 		
 		int data = (Integer.valueOf(GROUP) << 16) | INSTANCE_NUM;	// DATA OR agent id
 		
 		// register this router at registration service
-		Util.register("" + PORT, NAME + GROUP + "-" + instanceNum_s, "" + data);
+		Util.register("" + ROUTER_PORT, NAME + GROUP + "-" + instanceNum_s, "" + data);
 		
 		// fetch information of routers
 		ArrayList<String> routersAll = Util.fetch(NAME + GROUP);

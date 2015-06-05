@@ -12,6 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Util {
+	
+	static int PROXY_SIDE_LISTENER = 0;
+	static int ROUTER_SIDE_LISTENER = 1;
+	
   public static ArrayList<String> fetch(String name) {
 	  List<String> list = new ArrayList<String>();
 	  try {
@@ -124,4 +128,20 @@ public class Util {
 	  byte[] result = baos.toByteArray();
 	  return result;
   }
+  
+  public static int getPortFromURL(String line){
+		String[] parts = line.split(" ");
+		if(parts.length >= 2){
+			String[] URLParts = parts[1].split(":");
+			if(URLParts.length >= 2){
+				try{
+					int port = Integer.valueOf(URLParts[URLParts.length-1]).intValue();
+					return port;
+				}catch(NumberFormatException e){
+					return -1;
+				}
+			}
+		}
+		return -1;			
+	}
 }
