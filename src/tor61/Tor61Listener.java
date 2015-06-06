@@ -26,7 +26,7 @@ public class Tor61Listener extends Thread{
 				Socket s = serverSocket.accept();
 				if (type == Util.PROXY_SIDE_LISTENER) {
 					streamID ++;
-					ProxySideProcessor processor = new ProxySideProcessor(s);
+					ProxySideBrowserProcessor processor = new ProxySideBrowserProcessor(s);
 					processor.start();
 					processor.streamID = streamID;
 				} else {

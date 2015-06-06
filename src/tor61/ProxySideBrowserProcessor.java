@@ -9,12 +9,12 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class ProxySideProcessor extends Thread{
+public class ProxySideBrowserProcessor extends Thread{
 	Socket browserSocket;
 	short streamID;
 	byte[] receiveBuffer;
 	
-	public ProxySideProcessor(Socket browserSocket){
+	public ProxySideBrowserProcessor(Socket browserSocket){
 		// initiations and data goes here...
 		this.browserSocket = browserSocket;
 	}
@@ -74,10 +74,13 @@ public class ProxySideProcessor extends Thread{
 			
 			// ===================== Stream Creation ============================== 
 			
+			// update stream id table
+			//Util.streamTable.put(streamID, );
+			
 			String host_ip = java.net.InetAddress.getByName(host).getHostName();
 			byte[] relayBegin = Cell.relayBegin((short) 1, streamID, host_ip + ":" + port);
 			
-			Socket adjNodeSocket = Util.adjNodeSocket;
+			Socket adjNodeSocket = Util.broAdjNodeSocket;
 			
 			// get buffer of adjcent node from Tor side of this node
 			ConcurrentLinkedQueue<byte[]> adjNodeBuffer = Util.bufferTable.get(adjNodeSocket);
