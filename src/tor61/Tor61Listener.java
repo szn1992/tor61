@@ -8,7 +8,7 @@ import java.net.Socket;
 public class Tor61Listener extends Thread{
 	int port;
 	int type;
-	int streamID;
+	short streamID;
 	
 	public Tor61Listener(int port, int type){
 		// initiations and data goes here...

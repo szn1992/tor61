@@ -117,6 +117,9 @@ public class Cell {
 		bb.putShort((short) data.length);
 		bb.put(DATA);
 		bb.put(data);
+		
+		if (bb.array().length > 512)
+			System.err.println("data is too long motherfuck");
 		return  bb.array();
 	}
 	

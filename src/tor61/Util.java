@@ -7,19 +7,27 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentMap;
 
 public class Util {
 	
 	static int PROXY_SIDE_LISTENER = 0;
 	static int ROUTER_SIDE_LISTENER = 1;
+	static Socket adjNodeSocket;
 	
-	Map<Pair<Socket, Integer>,Pair<Socket,Integer>> routingTable = new HashMap<Pair<Socket, Integer>,Pair<Socket,Integer>>();
-	Map<Socket, ConcurrentLinkedQueue<Cell>> bufferTable = new HashMap<Socket, ConcurrentLinkedQueue<Cell>>();
+	static HashMap<Byte, String> CELL_TYPE_BYTE_MAP = Util.getByteCellTypeMap();
+	static HashMap<Byte, String> RELAY_CMD_BYTE_MAP = Util.getByteRelayCmdMap();
+	
+	
+	ConcurrentMap<Pair<Socket, Integer>,Pair<Socket,Integer>> routingTable = new ConcurrentHashMap<Pair<Socket, Integer>,Pair<Socket,Integer>>();
+	static ConcurrentMap<Socket, ConcurrentLinkedQueue<byte[]>> bufferTable = new ConcurrentHashMap<Socket, ConcurrentLinkedQueue<byte[]>>();
 	
   public static ArrayList<String> fetch(String name) {
 	  List<String> list = new ArrayList<String>();
@@ -149,4 +157,17 @@ public class Util {
 		}
 		return -1;			
 	}
+  
+  public static void buildAdjNodeSocket(String ip, int port) {
+	  try {
+		adjNodeSocket = new Socket(ip, port);
+	} catch (UnknownHostException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+  }
+ 
 }

@@ -59,6 +59,9 @@ public class Tor61 {
 		int port = Integer.valueOf(info[1]);
 		int registrationData = Integer.valueOf(info[2]);
 		
+		Util.buildAdjNodeSocket(ip, port);
+		
+		
 		// Here, I try to connect to the first node without checking if there is a 
 		// TCP connection, fine when create circuit for the first time, but need to 
 		// change when circuit creation need to be done multiple times
