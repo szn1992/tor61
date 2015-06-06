@@ -12,8 +12,8 @@ public class Cell {
 	boolean isRelayType = false;
 	
 	short streamID;
-	short padding;
-	int digest;
+	short padding = 0;
+	int digest = 0;
 	short bodyLength;
 	byte relayCmd;
 	byte[] body;
@@ -37,13 +37,10 @@ public class Cell {
 	}
 	
 	// RELAY cell constructor
-	public Cell(short circuitID, String cmd, short streamID, short padding,
-				int digest, short bodyLength, String relayCmd, byte[] body) {
+	public Cell(short circuitID, String cmd, short streamID, short bodyLength, String relayCmd, byte[] body) {
 		this.circuitID = circuitID;
 		this.cmd = CELL_TYPE_MAP.get(cmd);
 		this.streamID = streamID;
-		this.padding = padding;
-		this.digest = digest;
 		this.bodyLength = bodyLength;
 		this.relayCmd = RELAY_CMD_MAP.get(relayCmd);
 		this.body = body;

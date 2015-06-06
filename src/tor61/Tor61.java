@@ -84,7 +84,7 @@ public class Tor61 {
 					String body = ipNext + ":" + portNext + "\0" + registrationDataNext;
 					byte[] bodyByte = body.getBytes();
 					
-					Cell extend = new Cell((short) 0, "RELAY", (short) 0,(short) 0, (short) 0, (short) bodyByte.length, "EXTEND", bodyByte);
+					Cell extend = new Cell((short) 0, "RELAY", (short) 0, (short) bodyByte.length, "EXTEND", bodyByte);
 					s.getOutputStream().write(extend.getByteArray());
 					received = ByteBuffer.wrap(Util.readMessageCell(in));
 					if(CELL_TYPE_BYTE_MAP.get(received.get(2)).equals("EXTENDED")){

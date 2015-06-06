@@ -10,11 +10,16 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Util {
 	
 	static int PROXY_SIDE_LISTENER = 0;
 	static int ROUTER_SIDE_LISTENER = 1;
+	
+	Map<Pair<Socket, Integer>,Pair<Socket,Integer>> routingTable = new HashMap<Pair<Socket, Integer>,Pair<Socket,Integer>>();
+	Map<Socket, ConcurrentLinkedQueue<Cell>> bufferTable = new HashMap<Socket, ConcurrentLinkedQueue<Cell>>();
 	
   public static ArrayList<String> fetch(String name) {
 	  List<String> list = new ArrayList<String>();

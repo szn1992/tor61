@@ -6,17 +6,31 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ProxySideProcessor extends Thread{
 	Socket browserSocket;
 	
-	public ProxySideProcessor(Socket s){
+	public ProxySideProcessor(Socket browserSocket){
 		// initiations and data goes here...
-		this.browserSocket = s;
+		this.browserSocket = browserSocket;
 	}
 	
 	public void run(){
 		try {
+			// ===================== Stream Creation ============================== 
+			Cell relayBegin = new Cell();
+			
+			
+			// ====================================================================
+			
+			
+			
+				
+			//=== ======== Extract information from the http request  =============
 			InputStream in;
 			in = browserSocket.getInputStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -30,7 +44,6 @@ public class ProxySideProcessor extends Thread{
 			while((line = br.readLine()) != null && !line.equals("")){
 				lineCount++;
 				String lineWithoutSpace = line.replace(" ", "").toLowerCase();
-				//System.out.println(line);
 				if(lineCount == 1) {
 					firstLine = line;
 					request += line.replace("HTTP/1.1", "HTTP/1.0") + "\r\n";
@@ -64,6 +77,9 @@ public class ProxySideProcessor extends Thread{
 			
 			if (host == "")	// if host is not found, returns
 				return;
+			// ====================================================================
+			
+			
 			
 			if(requestType.equals("CONNECT")){ // connect
 				try{
