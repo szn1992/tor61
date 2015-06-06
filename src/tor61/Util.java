@@ -5,13 +5,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+<<<<<<< HEAD
 import java.util.Map;
+=======
+>>>>>>> origin/master
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
@@ -20,6 +22,7 @@ public class Util {
 	
 	static int PROXY_SIDE_LISTENER = 0;
 	static int ROUTER_SIDE_LISTENER = 1;
+<<<<<<< HEAD
 	static Socket adjNodeSocket;
 	
 	static HashMap<Byte, String> CELL_TYPE_BYTE_MAP = Util.getByteCellTypeMap();
@@ -28,6 +31,13 @@ public class Util {
 	
 	ConcurrentMap<Pair<Socket, Integer>,Pair<Socket,Integer>> routingTable = new ConcurrentHashMap<Pair<Socket, Integer>,Pair<Socket,Integer>>();
 	static ConcurrentMap<Socket, ConcurrentLinkedQueue<byte[]>> bufferTable = new ConcurrentHashMap<Socket, ConcurrentLinkedQueue<byte[]>>();
+=======
+	static HashMap<Byte, String> CELL_TYPE_BYTE_MAP = getByteCellTypeMap();
+	static HashMap<Byte, String> RELAY_CMD_BYTE_MAP = getByteRelayCmdMap();
+	
+	static ConcurrentMap<Pair<Socket, Integer>,Pair<Socket,Integer>> routingTable = new ConcurrentHashMap<Pair<Socket, Integer>,Pair<Socket,Integer>>();
+	static ConcurrentMap<Socket, Buffer> bufferTable = new ConcurrentHashMap<Socket, Buffer>();
+>>>>>>> origin/master
 	
   public static ArrayList<String> fetch(String name) {
 	  List<String> list = new ArrayList<String>();
