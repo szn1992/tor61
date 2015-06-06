@@ -5,21 +5,23 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentMap;
 
 public class Util {
 	
 	static int PROXY_SIDE_LISTENER = 0;
 	static int ROUTER_SIDE_LISTENER = 1;
+	static HashMap<Byte, String> CELL_TYPE_BYTE_MAP = getByteCellTypeMap();
+	static HashMap<Byte, String> RELAY_CMD_BYTE_MAP = getByteRelayCmdMap();
 	
-	Map<Pair<Socket, Integer>,Pair<Socket,Integer>> routingTable = new HashMap<Pair<Socket, Integer>,Pair<Socket,Integer>>();
-	Map<Socket, ConcurrentLinkedQueue<Cell>> bufferTable = new HashMap<Socket, ConcurrentLinkedQueue<Cell>>();
+	ConcurrentMap<Pair<Socket, Integer>,Pair<Socket,Integer>> routingTable = new ConcurrentHashMap<Pair<Socket, Integer>,Pair<Socket,Integer>>();
+	ConcurrentMap<Socket, ConcurrentLinkedQueue<Cell>> bufferTable = new ConcurrentHashMap<Socket, ConcurrentLinkedQueue<Cell>>();
 	
   public static ArrayList<String> fetch(String name) {
 	  List<String> list = new ArrayList<String>();
