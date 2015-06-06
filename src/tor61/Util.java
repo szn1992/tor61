@@ -10,10 +10,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-<<<<<<< HEAD
-import java.util.Map;
-=======
->>>>>>> origin/master
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
@@ -22,22 +19,21 @@ public class Util {
 	
 	static int PROXY_SIDE_LISTENER = 0;
 	static int ROUTER_SIDE_LISTENER = 1;
-<<<<<<< HEAD
-	static Socket adjNodeSocket;
+
+	static Socket broAdjNodeSocket;		// adjacent node socket to (this node - browser)
+	static Socket serAdjNodeSocket;		// adjacent node socket to (this node - server)
 	
-	static HashMap<Byte, String> CELL_TYPE_BYTE_MAP = Util.getByteCellTypeMap();
-	static HashMap<Byte, String> RELAY_CMD_BYTE_MAP = Util.getByteRelayCmdMap();
-	
-	
-	ConcurrentMap<Pair<Socket, Integer>,Pair<Socket,Integer>> routingTable = new ConcurrentHashMap<Pair<Socket, Integer>,Pair<Socket,Integer>>();
-	static ConcurrentMap<Socket, ConcurrentLinkedQueue<byte[]>> bufferTable = new ConcurrentHashMap<Socket, ConcurrentLinkedQueue<byte[]>>();
-=======
 	static HashMap<Byte, String> CELL_TYPE_BYTE_MAP = getByteCellTypeMap();
 	static HashMap<Byte, String> RELAY_CMD_BYTE_MAP = getByteRelayCmdMap();
 	
-	static ConcurrentMap<Pair<Socket, Integer>,Pair<Socket,Integer>> routingTable = new ConcurrentHashMap<Pair<Socket, Integer>,Pair<Socket,Integer>>();
-	static ConcurrentMap<Socket, Buffer> bufferTable = new ConcurrentHashMap<Socket, Buffer>();
->>>>>>> origin/master
+	static ConcurrentMap<Pair<Socket, Short>,Pair<Socket,Short>> routingTable = 
+								new ConcurrentHashMap<Pair<Socket, Short>,Pair<Socket,Short>>();
+	
+	static ConcurrentMap<Socket, ConcurrentLinkedQueue<byte[]>> bufferTable = 
+								new ConcurrentHashMap<Socket, ConcurrentLinkedQueue<byte[]>>();
+	
+	static ConcurrentMap<Short, Socket> streamIDtable = 
+								new ConcurrentHashMap<Short, Socket>();
 	
   public static ArrayList<String> fetch(String name) {
 	  List<String> list = new ArrayList<String>();
@@ -170,7 +166,7 @@ public class Util {
   
   public static void buildAdjNodeSocket(String ip, int port) {
 	  try {
-		adjNodeSocket = new Socket(ip, port);
+		broAdjNodeSocket = new Socket(ip, port);
 	} catch (UnknownHostException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
