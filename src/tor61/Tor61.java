@@ -63,16 +63,16 @@ public class Tor61 {
 		// TCP connection, fine when create circuit for the first time, but need to 
 		// change when circuit creation need to be done multiple times
 		Socket s = new Socket(ip, port);
-		Cell openCell = new Cell((short) 0,"OPEN", data, registrationData);
-		s.getOutputStream().write(openCell.getByteArray()); // send the open cell
+		byte[] openCell = Cell.open((short)0, data, registrationData);
+		s.getOutputStream().write(openCell); // send the open cell
 		
 		InputStream in = s.getInputStream();
 		ByteBuffer received = ByteBuffer.wrap(Util.readMessageCell(in));
 		if(CELL_TYPE_BYTE_MAP.get(received.get(2)).equals("OPENED")){ // first node successfully opened
 			// create a circuit
 			short circuitID = 1; // hard code the first circuit id to be 1
-			Cell createCell = new Cell(circuitID, "CREATE");
-			s.getOutputStream().write(createCell.getByteArray());
+			byte[] createCell = Cell.create(circuitID);
+			s.getOutputStream().write(createCell);
 			received = ByteBuffer.wrap(Util.readMessageCell(in));
 			if(CELL_TYPE_BYTE_MAP.get(received.get(2)).equals("CREATED")){ // circuit to first node successfully created
 				int count = 0;
@@ -81,11 +81,9 @@ public class Tor61 {
 					String ipNext = infoNext[0];
 					int portNext = Integer.valueOf(infoNext[1]);
 					int registrationDataNext = Integer.valueOf(infoNext[2]);
-					String body = ipNext + ":" + portNext + "\0" + registrationDataNext;
-					byte[] bodyByte = body.getBytes();
-					
-					Cell extend = new Cell((short) 0, "RELAY", (short) 0, (short) bodyByte.length, "EXTEND", bodyByte);
-					s.getOutputStream().write(extend.getByteArray());
+					String address = ipNext + ":" + portNext;
+					byte[] extendCell = Cell.relayExtend((short) 1, (short) 0, address, registrationDataNext);
+					s.getOutputStream().write(extendCell);
 					received = ByteBuffer.wrap(Util.readMessageCell(in));
 					if(CELL_TYPE_BYTE_MAP.get(received.get(2)).equals("EXTENDED")){
 						count++;
