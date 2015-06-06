@@ -20,8 +20,8 @@ public class Util {
 	static HashMap<Byte, String> CELL_TYPE_BYTE_MAP = getByteCellTypeMap();
 	static HashMap<Byte, String> RELAY_CMD_BYTE_MAP = getByteRelayCmdMap();
 	
-	ConcurrentMap<Pair<Socket, Integer>,Pair<Socket,Integer>> routingTable = new ConcurrentHashMap<Pair<Socket, Integer>,Pair<Socket,Integer>>();
-	ConcurrentMap<Socket, ConcurrentLinkedQueue<Cell>> bufferTable = new ConcurrentHashMap<Socket, ConcurrentLinkedQueue<Cell>>();
+	static ConcurrentMap<Pair<Socket, Integer>,Pair<Socket,Integer>> routingTable = new ConcurrentHashMap<Pair<Socket, Integer>,Pair<Socket,Integer>>();
+	static ConcurrentMap<Socket, Buffer> bufferTable = new ConcurrentHashMap<Socket, Buffer>();
 	
   public static ArrayList<String> fetch(String name) {
 	  List<String> list = new ArrayList<String>();
