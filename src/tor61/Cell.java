@@ -16,187 +16,81 @@ public class Cell {
 	public final static byte BEGIN = 0x01;
 	public final static byte DATA = 0x02;
 	public final static byte END = 0x03;
-	public final static byte CONNECTED = 0x04;
-	public final static byte EXTEND = 0x06;
-	public final static byte EXTENDED = 0x07;
-	public final static byte BEGIN_FAILED = 0x0b;
-	public final static byte EXTEND_FAILED = 0x0c;
+	public final static byte CONNECTION = 0x04;
+	public final static byte EXTEND = 0x05;
+	public final static byte END = 0x03;
+	public final static byte END = 0x03;
+	public final static byte END = 0x03;
 	
-	public final static int CELL_SIZE = 512;
+	map.put("BEGIN", (byte) 0x01);
+	  map.put("DATA", (byte) 0x02);
+	  map.put("END", (byte) 0x03);
+	  map.put("CONNECTED", (byte) 0x04);
+	  map.put("EXTEND", (byte) 0x06);
+	  map.put("EXTENDED", (byte) 0x07);
+	  map.put("BEGIN FAILED", (byte) 0x0b);
+	  map.put("EXTEND FAILED", (byte) 0x0c);
+	  
+	short circuitID;
+	byte cmd;
+	int openerID;
+	int openedID;
+	boolean isOpenType = false;
+	boolean isRelayType = false;
+	
+	short streamID;
+	short padding = 0;
+	int digest = 0;
+	short bodyLength;
+	byte relayCmd;
+	byte[] body;
 	
 	static HashMap<String, Byte> CELL_TYPE_MAP = Util.getCellTypeMap();
 	static HashMap<String, Byte> RELAY_CMD_MAP = Util.getRelayCmdMap();
 	
-	// open
-	public static byte[] open(short circuitID, int openerID, int openedID){
-		ByteBuffer bb = ByteBuffer.allocate(512);
-		bb.putShort(circuitID);
-		bb.put(OPEN);
-		bb.putInt(openerID);
-		bb.putInt(openedID);
-		return  bb.array();
+	// OPEN, OPENED, OPEN FAILED cell constructor
+	public Cell(short circuitID, String cmd, int openerID, int openedID) {
+		this.circuitID = circuitID;
+		this.cmd = CELL_TYPE_MAP.get(cmd);
+		this.openerID = openerID;
+		this.openedID = openedID;
+		isOpenType = true;
 	}
 	
-	// opened
-	public static byte[] opened(byte[] open){
-		ByteBuffer bb = ByteBuffer.wrap(open);
-		short circuitID = bb.getShort(0);
-		int openerID = bb.getInt(3);
-		int openedID = bb.getInt(7);
+	// other than OPEN AND RELAY cell constructor
+	public Cell(short circuitID, String cmd) {
+		this.circuitID = circuitID;
+		this.cmd = CELL_TYPE_MAP.get(cmd);
+	}
+	
+	// RELAY cell constructor
+	public Cell(short circuitID, String cmd, short streamID, short bodyLength, String relayCmd, byte[] body) {
+		this.circuitID = circuitID;
+		this.cmd = CELL_TYPE_MAP.get(cmd);
+		this.streamID = streamID;
+		this.bodyLength = bodyLength;
+		this.relayCmd = RELAY_CMD_MAP.get(relayCmd);
+		this.body = body;
+		isRelayType = true;
+	}
+
+	public byte[] getByteArray() {
+		ByteBuffer bb = ByteBuffer.allocate(512);
+		bb.putShort(circuitID);
+		bb.put(cmd);
 		
-		ByteBuffer result = ByteBuffer.allocate(512);
-		result.putShort(circuitID);
-		result.put(OPENED);
-		result.putInt(openerID);
-		result.putInt(openedID);
-		return  result.array();
-	}
-	
-	// open failed
-	public static byte[] openFailed(byte[] open){
-		ByteBuffer bb = ByteBuffer.wrap(open);
-		short circuitID = bb.getShort(0);
-		int openerID = bb.getInt(3);
-		int openedID = bb.getInt(7);
+		if (isOpenType) {
+			bb.putInt(openerID);
+			bb.putInt(openedID);
+		} else if (isRelayType) {
+			bb.putShort(streamID);
+			bb.putShort(padding);
+			bb.putInt(digest);
+			bb.putShort(bodyLength);
+			bb.put(relayCmd);
+			bb.put(body);
+		}
 		
-		ByteBuffer result = ByteBuffer.allocate(512);
-		result.putShort(circuitID);
-		result.put(OPEN_FAILED);
-		result.putInt(openerID);
-		result.putInt(openedID);
-		return result.array();
-	}
-	
-	// create
-	public static byte[] create(short circuitID){
-		ByteBuffer bb = ByteBuffer.allocate(512);
-		bb.putShort(circuitID);
-		bb.put(CREATE);
-		return bb.array();
-	}
-	
-	// created
-	public static byte[] created(short circuitID){
-		ByteBuffer bb = ByteBuffer.allocate(512);
-		bb.putShort(circuitID);
-		bb.put(CREATED);
-		return bb.array();
-	}
-	
-	// create failed
-	public static byte[] createFailed(short circuitID){
-		ByteBuffer bb = ByteBuffer.allocate(512);
-		bb.putShort(circuitID);
-		bb.put(CREATE_FAILED);
-		return bb.array();
-	}
-	
-	
-	// relay begin
-	public static byte[] relayBegin(short circuitID, short streamID, String address){		
-		ByteBuffer bb = ByteBuffer.allocate(512);
-		bb.putShort(circuitID);
-		bb.put(RELAY);
-		bb.putShort(streamID);
-		bb.putShort((short) 0);
-		bb.putInt(0);
-		bb.putShort((short) address.length());
-		bb.put(BEGIN);
-		bb.put((address + "\0").getBytes());
-		return  bb.array();
-	}
-	
-	// relay data
-	public static byte[] relayData(short circuitID, short streamID, byte[] data){		
-		ByteBuffer bb = ByteBuffer.allocate(512);
-		bb.putShort(circuitID);
-		bb.put(RELAY);
-		bb.putShort(streamID);
-		bb.putShort((short) 0);
-		bb.putInt(0);
-		bb.putShort((short) data.length);
-		bb.put(DATA);
-		bb.put(data);
-		return  bb.array();
-	}
-	
-	// relay end
-	public static byte[] relayEnd(short circuitID, short streamID){		
-		ByteBuffer bb = ByteBuffer.allocate(512);
-		bb.putShort(circuitID);
-		bb.put(RELAY);
-		bb.putShort(streamID);
-		bb.putShort((short) 0);
-		bb.putInt(0);
-		bb.putShort((short) 0);
-		bb.put(END);
-		return bb.array();
-	}
-	
-	// relay connected
-	public static byte[] relayConnected(short circuitID, short streamID){		
-		ByteBuffer bb = ByteBuffer.allocate(512);
-		bb.putShort(circuitID);
-		bb.put(RELAY);
-		bb.putShort(streamID);
-		bb.putShort((short) 0);
-		bb.putInt(0);
-		bb.putShort((short) 0);
-		bb.put(CONNECTED);
-		return bb.array();
-	}
-	
-	// relay extend
-	public static byte[] relayExtend(short circuitID, short streamID, String address, int agentID){		
-		String body = address + "\0" + agentID;
-		ByteBuffer bb = ByteBuffer.allocate(512);
-		bb.putShort(circuitID);
-		bb.put(RELAY);
-		bb.putShort(streamID);
-		bb.putShort((short) 0);
-		bb.putInt(0);
-		bb.putShort((short) body.length());
-		bb.put(EXTEND);
-		bb.put(body.getBytes());
-		return bb.array();
-	}
-	
-	// relay extended
-	public static byte[] relayExtended(short circuitID, short streamID){		
-		ByteBuffer bb = ByteBuffer.allocate(512);
-		bb.putShort(circuitID);
-		bb.put(RELAY);
-		bb.putShort(streamID);
-		bb.putShort((short) 0);
-		bb.putInt(0);
-		bb.putShort((short) 0);
-		bb.put(EXTENDED);
-		return bb.array();
-	}
-	
-	// begin failed
-	public static byte[] beginFailed(short circuitID, short streamID){		
-		ByteBuffer bb = ByteBuffer.allocate(512);
-		bb.putShort(circuitID);
-		bb.put(RELAY);
-		bb.putShort(streamID);
-		bb.putShort((short) 0);
-		bb.putInt(0);
-		bb.putShort((short) 0);
-		bb.put(BEGIN_FAILED);
-		return bb.array();
-	}
-	
-	// extend failed
-	public static byte[] extendFailed(short circuitID, short streamID){		
-		ByteBuffer bb = ByteBuffer.allocate(512);
-		bb.putShort(circuitID);
-		bb.put(RELAY);
-		bb.putShort(streamID);
-		bb.putShort((short) 0);
-		bb.putInt(0);
-		bb.putShort((short) 0);
-		bb.put(EXTEND_FAILED);
 		return bb.array();
 	}
 }

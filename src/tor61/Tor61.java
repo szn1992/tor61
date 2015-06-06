@@ -63,8 +63,13 @@ public class Tor61 {
 		// TCP connection, fine when create circuit for the first time, but need to 
 		// change when circuit creation need to be done multiple times
 		Socket s = new Socket(ip, port);
+<<<<<<< HEAD
 		byte[] openCell = Cell.open((short)0, data, registrationData);
 		s.getOutputStream().write(openCell); // send the open cell
+=======
+		Cell openCell = new Cell((short) 0,"OPEN", data, registrationData); // hard code 1 as circuit id
+		s.getOutputStream().write(openCell.getByteArray()); // send the open cell
+>>>>>>> origin/master
 		
 		InputStream in = s.getInputStream();
 		ByteBuffer received = ByteBuffer.wrap(Util.readMessageCell(in));

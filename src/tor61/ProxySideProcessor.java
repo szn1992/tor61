@@ -74,7 +74,7 @@ public class ProxySideProcessor extends Thread{
 			
 			
 			// ===================== Stream Creation ============================== 
-					byte[] relayBegin = Cell.relayBegin((short) 1, streamID, address);
+			Cell relayBegin = new Cell((short) 1, "RELAY", streamID, (short) 0, String "BEGIN", );
 					
 					
 			// ====================================================================
