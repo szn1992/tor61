@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ProxySideProcessor extends Thread{
 	Socket browserSocket;
+	int streamID;
 	
 	public ProxySideProcessor(Socket browserSocket){
 		// initiations and data goes here...
@@ -21,15 +22,7 @@ public class ProxySideProcessor extends Thread{
 	
 	public void run(){
 		try {
-			// ===================== Stream Creation ============================== 
-			Cell relayBegin = new Cell();
 			
-			
-			// ====================================================================
-			
-			
-			
-				
 			//=== ======== Extract information from the http request  =============
 			InputStream in;
 			in = browserSocket.getInputStream();
@@ -80,6 +73,12 @@ public class ProxySideProcessor extends Thread{
 			// ====================================================================
 			
 			
+			// ===================== Stream Creation ============================== 
+					Cell relayBegin = new Cell((short) 1, "RELAY", streamID, (short) 0, String "BEGIN", );
+					
+					
+			// ====================================================================
+					
 			
 			if(requestType.equals("CONNECT")){ // connect
 				try{

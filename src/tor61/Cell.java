@@ -4,6 +4,33 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 
 public class Cell {
+	public final static byte OPEN = 0x05;
+	public final static byte OPENED = 0x06;
+	public final static byte OPEN_FAILED = 0x07;
+	public final static byte CREATE = 0x01;
+	public final static byte CREATED = 0x02;
+	public final static byte CREATE_FAILED = 0x08;
+	public final static byte DESTORY = 0x04;
+	public final static byte RELAY = 0x03;
+
+	public final static byte BEGIN = 0x01;
+	public final static byte DATA = 0x02;
+	public final static byte END = 0x03;
+	public final static byte CONNECTION = 0x04;
+	public final static byte EXTEND = 0x05;
+	public final static byte END = 0x03;
+	public final static byte END = 0x03;
+	public final static byte END = 0x03;
+	
+	map.put("BEGIN", (byte) 0x01);
+	  map.put("DATA", (byte) 0x02);
+	  map.put("END", (byte) 0x03);
+	  map.put("CONNECTED", (byte) 0x04);
+	  map.put("EXTEND", (byte) 0x06);
+	  map.put("EXTENDED", (byte) 0x07);
+	  map.put("BEGIN FAILED", (byte) 0x0b);
+	  map.put("EXTEND FAILED", (byte) 0x0c);
+	  
 	short circuitID;
 	byte cmd;
 	int openerID;
