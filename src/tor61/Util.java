@@ -6,9 +6,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
@@ -17,6 +19,7 @@ public class Util {
 	
 	static int PROXY_SIDE_LISTENER = 0;
 	static int ROUTER_SIDE_LISTENER = 1;
+<<<<<<< HEAD
 	static int openerID;
 	static HashMap<Byte, String> CELL_TYPE_BYTE_MAP = getByteCellTypeMap();
 	static HashMap<Byte, String> RELAY_CMD_BYTE_MAP = getByteRelayCmdMap();
@@ -38,6 +41,23 @@ public class Util {
 		
 		return false;
 	}
+=======
+
+	static Socket broAdjNodeSocket;		// adjacent node socket to (this node - browser)
+	static Socket serAdjNodeSocket;		// adjacent node socket to (this node - server)
+	
+	static HashMap<Byte, String> CELL_TYPE_BYTE_MAP = getByteCellTypeMap();
+	static HashMap<Byte, String> RELAY_CMD_BYTE_MAP = getByteRelayCmdMap();
+	
+	static ConcurrentMap<Pair<Socket, Short>,Pair<Socket,Short>> routingTable = 
+								new ConcurrentHashMap<Pair<Socket, Short>,Pair<Socket,Short>>();
+	
+	static ConcurrentMap<Socket, ConcurrentLinkedQueue<byte[]>> bufferTable = 
+								new ConcurrentHashMap<Socket, ConcurrentLinkedQueue<byte[]>>();
+	
+	static ConcurrentMap<Short, Socket> streamIDtable = 
+								new ConcurrentHashMap<Short, Socket>();
+>>>>>>> origin/master
 	
   public static ArrayList<String> fetch(String name) {
 	  List<String> list = new ArrayList<String>();
@@ -169,4 +189,17 @@ public class Util {
 		}
 		return -1;			
 	}
+  
+  public static void buildAdjNodeSocket(String ip, int port) {
+	  try {
+		broAdjNodeSocket = new Socket(ip, port);
+	} catch (UnknownHostException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+  }
+ 
 }
