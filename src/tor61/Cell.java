@@ -10,7 +10,7 @@ public class Cell {
 	public final static byte CREATE = 0x01;
 	public final static byte CREATED = 0x02;
 	public final static byte CREATE_FAILED = 0x08;
-	public final static byte DESTORY = 0x04;
+	public final static byte DESTROY = 0x04;
 	public final static byte RELAY = 0x03;
 
 	public final static byte BEGIN = 0x01;
@@ -83,11 +83,29 @@ public class Cell {
 		return bb.array();
 	}
 	
+	// created
+	public static byte[] created(byte[] create){
+		ByteBuffer bb = ByteBuffer.wrap(create);
+		short circuitID = bb.getShort(0);
+		
+		ByteBuffer result = ByteBuffer.allocate(512);
+		result.putShort(circuitID);
+		result.put(CREATED);
+		return result.array();
+	}
+	
 	// create failed
 	public static byte[] createFailed(short circuitID){
 		ByteBuffer bb = ByteBuffer.allocate(512);
 		bb.putShort(circuitID);
 		bb.put(CREATE_FAILED);
+		return bb.array();
+	}
+	
+	public static byte[] destroy(short circuitID){
+		ByteBuffer bb = ByteBuffer.allocate(512);
+		bb.putShort(circuitID);
+		bb.put(DESTROY);
 		return bb.array();
 	}
 	

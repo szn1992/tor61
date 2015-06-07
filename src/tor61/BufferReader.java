@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class Buffer extends Thread{
+public class BufferReader extends Thread{
 	Socket socket;
 	ConcurrentLinkedQueue<byte[]> queue = new ConcurrentLinkedQueue<byte[]>();
 	
-	public Buffer(Socket s){
+	public BufferReader(Socket s){
 		this.socket = s;
 	}
 	

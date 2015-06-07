@@ -20,7 +20,7 @@ import os
 #print "parent pid = ", os.getppid()
 #print "my pid = ", os.getpid()
 
-REGISTRATION_SERVER_HOST = "war.cs.washington.edu"
+REGISTRATION_SERVER_HOST = "xwy.cs.washington.edu"
 REGISTRATION_SERVER_IP = socket.gethostbyname(REGISTRATION_SERVER_HOST);
 REGISTRATION_SERVER_PORT = 46101
 

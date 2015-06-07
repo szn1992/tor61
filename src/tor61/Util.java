@@ -17,11 +17,27 @@ public class Util {
 	
 	static int PROXY_SIDE_LISTENER = 0;
 	static int ROUTER_SIDE_LISTENER = 1;
+	static int openerID;
 	static HashMap<Byte, String> CELL_TYPE_BYTE_MAP = getByteCellTypeMap();
 	static HashMap<Byte, String> RELAY_CMD_BYTE_MAP = getByteRelayCmdMap();
 	
-	static ConcurrentMap<Pair<Socket, Integer>,Pair<Socket,Integer>> routingTable = new ConcurrentHashMap<Pair<Socket, Integer>,Pair<Socket,Integer>>();
-	static ConcurrentMap<Socket, Buffer> bufferTable = new ConcurrentHashMap<Socket, Buffer>();
+	static Socket broAdjNodeSocket;
+	
+	static ConcurrentMap<Pair<Socket, Short>,Pair<Socket,Short>> routingTable = new ConcurrentHashMap<Pair<Socket, Short>,Pair<Socket,Short>>();
+	static ConcurrentMap<Socket, ConcurrentLinkedQueue<byte[]>> bufferTable = new ConcurrentHashMap<Socket, ConcurrentLinkedQueue<byte[]>>();
+	static ConcurrentMap<Pair<Pair<Short, Short>, Socket>, Socket> streamIDtable = new ConcurrentHashMap<Pair<Pair<Short, Short>, Socket>, Socket>();// circuitID, StreamID,incomingSocket,outgoingSocket
+	static ConcurrentMap<Integer, Socket> agentIDTable = new ConcurrentHashMap<Integer, Socket>();
+	
+	public static boolean containCircuitID(short id, Socket socket){
+		if(routingTable.containsKey(Pair.of(socket, id))){
+			return true;
+		}
+		if(routingTable.containsValue(Pair.of(socket, id))){
+			return true;
+		}
+		
+		return false;
+	}
 	
   public static ArrayList<String> fetch(String name) {
 	  List<String> list = new ArrayList<String>();
@@ -85,8 +101,8 @@ public class Util {
 	  map.put("CONNECTED", (byte) 0x04);
 	  map.put("EXTEND", (byte) 0x06);
 	  map.put("EXTENDED", (byte) 0x07);
-	  map.put("BEGIN FAILED", (byte) 0x0b);
-	  map.put("EXTEND FAILED", (byte) 0x0c);
+	  map.put("BEGIN_FAILED", (byte) 0x0b);
+	  map.put("EXTEND_FAILED", (byte) 0x0c);
 	  
 	  return map;
   }
@@ -95,10 +111,10 @@ public class Util {
 	  HashMap<Byte, String> map = new HashMap<Byte, String>();
 	  map.put((byte) 0x05, "OPEN");
 	  map.put((byte) 0x06, "OPENED");
-	  map.put((byte) 0x07, "OPEN FAILED");
+	  map.put((byte) 0x07, "OPEN_FAILED");
 	  map.put((byte) 0x01, "CREATE");
 	  map.put((byte) 0x02, "CREATED");
-	  map.put((byte) 0x08, "CREATE FAILED");
+	  map.put((byte) 0x08, "CREATE_FAILED");
 	  map.put((byte) 0x04, "DESTROY");
 	  map.put((byte) 0x03, "RELAY");
 	  
@@ -113,8 +129,8 @@ public class Util {
 	  map.put((byte) 0x04, "CONNECTED");
 	  map.put((byte) 0x06, "EXTEND");
 	  map.put((byte) 0x07, "EXTENDED");
-	  map.put((byte) 0x0b, "BEGIN FAILED");
-	  map.put((byte) 0x0c, "EXTEND FAILED");
+	  map.put((byte) 0x0b, "BEGIN_FAILED");
+	  map.put((byte) 0x0c, "EXTEND_FAILED");
 	  
 	  return map;
   }
@@ -122,18 +138,20 @@ public class Util {
   // read message from the input stream
   // TODO: add timeout?
   public static byte[] readMessageCell(InputStream in){
-	  ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	  byte[] buffer = new byte[512];
+	  int read = 0;
 	  try {
-		  for(int s; (s=in.read(buffer)) != -1; ) {
-			  baos.write(buffer, 0, s);
+		  while(read < 512){
+			  int length = in.read(buffer, read, 512 - read);
+			  if(length == -1)
+				  break;
+			  read += length;
 		  }
 	  } catch (IOException e) {
 		  System.out.println("Error when reading message from the input stream.");
 		  e.printStackTrace();
 	  }
-	  byte[] result = baos.toByteArray();
-	  return result;
+	  return buffer;
   }
   
   public static int getPortFromURL(String line){

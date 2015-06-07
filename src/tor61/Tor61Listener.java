@@ -8,7 +8,7 @@ import java.net.Socket;
 public class Tor61Listener extends Thread{
 	int port;
 	int type;
-	int streamID;
+	short streamID;
 	
 	public Tor61Listener(int port, int type){
 		// initiations and data goes here...
@@ -26,10 +26,14 @@ public class Tor61Listener extends Thread{
 				Socket s = serverSocket.accept();
 				if (type == Util.PROXY_SIDE_LISTENER) {
 					streamID ++;
-					ProxySideProcessor processor = new ProxySideProcessor(s);
+					ProxySideBrowserProcessor processor = new ProxySideBrowserProcessor(s);
 					processor.start();
 					processor.streamID = streamID;
 				} else {
+					BufferReader receivedSocketBuffer = new BufferReader(s);
+					Util.bufferTable.put(s, receivedSocketBuffer.queue);
+					receivedSocketBuffer.start();
+					
 					RouterSideProcessor processor = new RouterSideProcessor(s);
 					processor.start();
 				}

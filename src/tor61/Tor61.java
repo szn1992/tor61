@@ -40,6 +40,7 @@ public class Tor61 {
 		String instanceNum_s = Util.padding(INSTANCE_NUM, 4);
 		
 		int data = (Integer.valueOf(GROUP) << 16) | INSTANCE_NUM;	// DATA OR agent id
+		Util.openerID = data;
 		
 		// register this router at registration service
 		Util.register("" + ROUTER_PORT, NAME + GROUP + "-" + instanceNum_s, "" + data);
@@ -48,21 +49,22 @@ public class Tor61 {
 		ArrayList<String> routersAll = Util.fetch(NAME + GROUP);
 		int routersNum = routersAll.size();
 		
-		ArrayList<String> routersSelected = new ArrayList<String>();
+		//ArrayList<String> routersSelected = new ArrayList<String>();
 		Random rand = new Random();
 		
 		// ======================== circuit creation =======================
 		
-		System.out.println("Check point1, first node information: " + routersSelected.get(0));
 		String[] info = routersAll.get(rand.nextInt(routersNum)).split(" "); //randomly pick one and extract info
 		String ip = info[0];
 		int port = Integer.valueOf(info[1]);
 		int registrationData = Integer.valueOf(info[2]);
+		System.out.println("Check point1, first node information: " + ip + " " + port);
 		
 		// Here, I try to connect to the first node without checking if there is a 
 		// TCP connection, fine when create circuit for the first time, but need to 
 		// change when circuit creation need to be done multiple times
 		Socket s = new Socket(ip, port);
+		Util.broAdjNodeSocket = s;
 		byte[] openCell = Cell.open((short)0, data, registrationData);
 		s.getOutputStream().write(openCell); // send the open cell
 		
@@ -98,25 +100,10 @@ public class Tor61 {
 			// and loop back again
 		}
 		
-		
-		// ===============================================================
-		
-		
-//		String router;
-//		String[] rAttributes;
-//		
-//		// this router's socket
-//		Socket myRouter = new Socket("localhost", PORT);
-//		
-//		// build circuit
-//		for (int i = 0; i < 0; i++) {
-//			router = routersSelected.get(i);
-//			rAttributes = router.split("\\s");	// ip port data
-//			Socket otherR = new Socket(rAttributes[0], Integer.valueOf(rAttributes[1]));
-//			
-//			// create circuit shit, haven't figured out
-//			
-//		}
+		Tor61Listener browserListener = new Tor61Listener(PROXY_PORT, Util.PROXY_SIDE_LISTENER);
+		browserListener.start();
+		Tor61Listener routerListener = new Tor61Listener(ROUTER_PORT, Util.ROUTER_SIDE_LISTENER);
+		routerListener.start();
 	   
     }	
 }
