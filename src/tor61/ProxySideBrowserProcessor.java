@@ -13,10 +13,7 @@ public class ProxySideBrowserProcessor extends Thread{
 	Socket browserSocket;
 	short streamID;
 	byte[] receiveBuffer;
-<<<<<<< HEAD
 	int bufferSize = 512 - 14;
-=======
->>>>>>> origin/master
 	
 	public ProxySideBrowserProcessor(Socket browserSocket){
 		// initiations and data goes here...
@@ -79,24 +76,13 @@ public class ProxySideBrowserProcessor extends Thread{
 			// ===================== Stream Creation ============================== 
 			
 			// update stream id table
-<<<<<<< HEAD
-=======
-			//Util.streamTable.put(streamID, );
->>>>>>> origin/master
 			
 			String host_ip = java.net.InetAddress.getByName(host).getHostName();
 			byte[] relayBegin = Cell.relayBegin((short) 1, streamID, host_ip + ":" + port);
 			
 			Socket adjNodeSocket = Util.broAdjNodeSocket;
 			
-<<<<<<< HEAD
 			Util.bufferTable.get(adjNodeSocket).add(relayBegin);	// add begin cell to the buffer
-=======
-			// get buffer of adjcent node from Tor side of this node
-			ConcurrentLinkedQueue<byte[]> adjNodeBuffer = Util.bufferTable.get(adjNodeSocket);
-			
-			adjNodeBuffer.add(relayBegin);	// add begin cell to the buffer
->>>>>>> origin/master
 			
 			// receive cell from adjacent node
 			ByteBuffer received = ByteBuffer.wrap(Util.readMessageCell(in));
@@ -104,7 +90,6 @@ public class ProxySideBrowserProcessor extends Thread{
 			// get cmd type from the received cell
 			String cmdType = Util.RELAY_CMD_BYTE_MAP.get(received.get(2));
 			
-<<<<<<< HEAD
 			if (cmdType.equals("CONNECTED")){ // stream created!
 				
 				// create buffer reader thread which reads buffer and writes to browser
@@ -147,51 +132,6 @@ public class ProxySideBrowserProcessor extends Thread{
 						Util.streamIDtable.remove(Pair.of(Pair.of((short) 1, streamID), browserSocket));
 					}
 				}
-=======
-			if (cmdType.equals("CONNECTED")){ // circuit to first node successfully created
-				
-				// create buffer reader thread which reads buffer and writes to browser
-				BufferReader bufferReader = new BufferReader(browserSocket);
-				bufferReader.start();
-			/*	
-				if(requestType.equals("CONNECT")){ // connect
-					try{
-						sendHTTPResponse("HTTP/1.1 200 OK\r\n", adjNodeSocket);
-						
-						// this thread listen to the browser and forward to web site server
-						TCPTunnel tunnel = new TCPTunnel(browserSocket, adjNodeSocket);
-						tunnel.start();
-						// the main thread listen to the server and forward to browser
-						sendData(br, adjNodeBuffer);
-						browserSocket.shutdownInput();
-						try {
-							tunnel.join();
-						} catch (InterruptedException e) {
-							System.out.println(e.getMessage());
-						}
-			
-						browserSocket.close();
-					}catch(IOException e){
-						System.out.println("Connetion failed");
-						sendHTTPResponse("HTTP/1.1 502 Bad Gateway\r\n", browserSocket);
-					}			
-				}else{ // if the request type is not "CONNECT"  */
-				
-				
-				// send request to web site
-				byte[] relayData = Cell.relayData((short) 1, streamID, (request + "\r\n").getBytes());
-				adjNodeBuffer.add(relayData);
-				
-				// read the reply from the web site and forward it to the browser
-				sendData(br, adjNodeBuffer);
-				
-				// close the socket
-				browserSocket.close();
-				
-				
-				
-			//	}
->>>>>>> origin/master
 						
 			} else if (cmdType.equals("BEGIN FAILED")) {
 				System.err.println("********BEGIN FAILED*********");
@@ -208,7 +148,6 @@ public class ProxySideBrowserProcessor extends Thread{
 		}
 	}
 		
-<<<<<<< HEAD
 //	public void sendData(BufferedReader br, ConcurrentLinkedQueue<byte[]> targetBuffer){
 //		byte[] relayData;
 //		String line = "";
@@ -223,33 +162,6 @@ public class ProxySideBrowserProcessor extends Thread{
 //			e.printStackTrace();
 //		}
 //	}
-=======
-	public void sendData(BufferedReader br, ConcurrentLinkedQueue<byte[]> targetBuffer){
-		byte[] relayData;
-		String line = "";
-		try {
-			while((line = br.readLine()) != null && !line.equals("")){
-				relayData = Cell.relayData((short) 1, streamID, line.getBytes());
-				targetBuffer.add(relayData);
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			System.out.println("Error when copying stream");
-			e.printStackTrace();
-		}
-	}
-	
-	private static void sendHTTPResponse(String response, Socket s){
-		PrintWriter s_out;
-		try {
-			s_out = new PrintWriter(s.getOutputStream(), true);
-			s_out.println(response);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			System.out.println("Error when sending response");
-		}
-	}
->>>>>>> origin/master
 	
 	private static int getPortFromURL(String line){
 		String[] parts = line.split(" ");
@@ -266,34 +178,4 @@ public class ProxySideBrowserProcessor extends Thread{
 		}
 		return -1;			
 	}
-<<<<<<< HEAD
 }
-=======
-	
-	/*
-	class TCPTunnel extends Thread{
-		Socket sender = null;
-		Socket receiver = null;
-	
-		public TCPTunnel(Socket sender, Socket recevier){
-			this.sender = sender;
-			this.receiver = recevier;
-		}
-		
-		public void run(){
-			try {
-				ProxySideProcessor.sendData(br, adjNodeBuffer);
-				sender.shutdownInput();
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				System.out.println("TCPTunnel Error");
-			}
-		}
-	}
-	
-	*/
-
-}
->>>>>>> origin/master
